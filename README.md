@@ -2,7 +2,7 @@
 
 # Hardhat and React Project with Solidity Smart Contract
 
-This project is a basic implementation of a Solidity smart contract using Hardhat and React. The smart contract is designed to retrieve the name and symbol of a token.
+This project is a basic implementation of a Solidity smart contract using Hardhat and React. The smart contract is designed to retrieve the name and symbol of a token and also set tokenname and tokensymbol.
 
 ## Prerequisites
 
@@ -26,5 +26,5 @@ Before running this project, ensure that you have the following software install
 
 ## Smart Contract
 
-The smart contract is located in `contracts/NewContract.sol`. The contract retrieves the name and symbol of a token and is licensed under the UNLICENSED SPDX License Identifier.
+The smart contract is located in `contracts/NewContract.sol`. The contract retrieves and updates the name and symbol of a token and is licensed under the UNLICENSED SPDX License Identifier.
 
