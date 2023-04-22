@@ -4,6 +4,9 @@ import Web3 from 'web3';
 function App() {
   const [tokenName, setTokenName] = useState('');
   const [tokenSymbol, setTokenSymbol] = useState('');
+  const [contractInstance, setContractInstance] = useState(null);
+  const [newTokenName, setNewTokenName] = useState('');
+  const [newTokenSymbol, setNewTokenSymbol] = useState('');
 
   useEffect(() => {
     const connectToWallet = async () => {
@@ -64,13 +67,36 @@ function App() {
               ],
               "stateMutability": "view",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_newTokenName",
+                  "type": "string"
+                }
+              ],
+              "name": "setTokenName",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_newTokenSymbol",
+                  "type": "string"
+                }
+              ],
+              "name": "setTokenSymbol",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             }
           ];
           const contract = new web3.eth.Contract(abi, contractAddress);
-          const name = await contract.methods.getTokenName().call();
-          const symbol = await contract.methods.getTokenSymbol().call();
-          setTokenName(name);
-          setTokenSymbol(symbol);
+          setContractInstance(contract);
         } catch (error) {
           console.log(`Failed to connect to wallet: ${error}`);
         }
@@ -81,10 +107,49 @@ function App() {
     connectToWallet();
   }, []);
 
+  const handleTokenNameChange = (event) => {
+    const name = event.target.value;
+    setNewTokenName(name);
+  };
+
+  const handleTokenSymbolChange = (event) => {
+    const symbol = event.target.value;
+    setNewTokenSymbol(symbol);
+  };
+
+  const handleTokenNameSubmit = async () => {
+    await contractInstance.methods.setTokenName(newTokenName).send({ from: window.ethereum.selectedAddress });
+    setTokenName(newTokenName);
+    setNewTokenName('');
+  };
+
+  const handleTokenSymbolSubmit = async () => {
+    await contractInstance.methods.setTokenSymbol(newTokenSymbol).send({ from: window.ethereum.selectedAddress });
+    setTokenSymbol(newTokenSymbol);
+    setNewTokenSymbol('');
+  };
+
+  const handleGetTokenSymbol = async () => {
+    const symbol = await contractInstance.methods.getTokenSymbol().call();
+    setTokenSymbol(symbol);
+    };
+
+    const handleGetTokenName = async () => {
+      const name = await contractInstance.methods.getTokenName().call();
+      setTokenName(name);
+      };
+      
+
   return (
     <div>
       <p>Token name: {tokenName}</p>
+      <input type="text" value={newTokenName} onChange={handleTokenNameChange} />
+      <button onClick={handleTokenNameSubmit}>Set Name</button>
       <p>Token symbol: {tokenSymbol}</p>
+      <input type="text" value={newTokenSymbol} onChange={handleTokenSymbolChange} />
+      <button onClick={handleTokenSymbolSubmit}>Set Symbol</button>
+      <button onClick={handleGetTokenSymbol}>Get Symbol</button>
+      <button onClick={handleGetTokenName}>Get Name</button>
     </div>
   );
 }
